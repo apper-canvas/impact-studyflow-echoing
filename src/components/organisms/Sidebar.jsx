@@ -39,7 +39,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                     isActive && "bg-gradient-to-r from-primary to-indigo-600 text-white shadow-md"
                   )
                 }
-              >
+>
                 {({ isActive }) => (
                   <>
                     <ApperIcon name={item.icon} size={20} />
@@ -49,6 +49,19 @@ const Sidebar = ({ isOpen, onClose }) => {
               </NavLink>
             ))}
           </nav>
+
+          <div className="mt-auto pt-4 border-t border-gray-200">
+            <button
+              onClick={() => {
+                const { logout } = React.useContext(require('../../App').AuthContext);
+                logout();
+              }}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50 w-full"
+            >
+              <ApperIcon name="LogOut" size={20} />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -86,7 +99,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
           
           <nav className="space-y-2">
-            {navItems.map((item) => (
+{navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -108,6 +121,19 @@ const Sidebar = ({ isOpen, onClose }) => {
               </NavLink>
             ))}
           </nav>
+
+          <div className="mt-auto pt-4 border-t border-gray-200">
+            <button
+              onClick={() => {
+                const { logout } = React.useContext(require('../../App').AuthContext);
+                logout();
+              }}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50 w-full"
+            >
+              <ApperIcon name="LogOut" size={20} />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </motion.aside>
     </>
