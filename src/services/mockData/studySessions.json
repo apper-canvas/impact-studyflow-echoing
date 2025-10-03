@@ -1,0 +1,23 @@
+[
+  {
+    "Id": 1,
+    "courseId": 1,
+    "duration": 120,
+    "date": "2024-12-14T14:00:00.000Z",
+    "notes": "Reviewed calculus concepts for upcoming exam"
+  },
+  {
+    "Id": 2,
+    "courseId": 2,
+    "duration": 90,
+    "date": "2024-12-14T16:30:00.000Z",
+    "notes": "Worked on data structures implementation"
+  },
+  {
+    "Id": 3,
+    "courseId": 3,
+    "duration": 60,
+    "date": "2024-12-15T10:00:00.000Z",
+    "notes": "Started essay outline for Shakespeare analysis"
+  }
+]
