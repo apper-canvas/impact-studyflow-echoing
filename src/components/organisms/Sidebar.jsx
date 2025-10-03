@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from '../../App';
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 
 const Sidebar = ({ isOpen, onClose }) => {
+const { logout } = useContext(AuthContext);
+  
   const navItems = [
     { path: "/", label: "Dashboard", icon: "LayoutDashboard" },
     { path: "/courses", label: "Courses", icon: "BookOpen" },
@@ -51,11 +54,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           </nav>
 
           <div className="mt-auto pt-4 border-t border-gray-200">
-            <button
-              onClick={() => {
-                const { logout } = React.useContext(require('../../App').AuthContext);
-                logout();
-              }}
+<button
+              onClick={logout}
               className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50 w-full"
             >
               <ApperIcon name="LogOut" size={20} />
@@ -123,11 +123,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           </nav>
 
           <div className="mt-auto pt-4 border-t border-gray-200">
-            <button
-              onClick={() => {
-                const { logout } = React.useContext(require('../../App').AuthContext);
-                logout();
-              }}
+<button
+              onClick={logout}
               className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50 w-full"
             >
               <ApperIcon name="LogOut" size={20} />
