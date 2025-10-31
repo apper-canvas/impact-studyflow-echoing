@@ -23,7 +23,7 @@ const CourseCard = ({ course, onClick, onEdit, onDelete }) => {
       <Card hover onClick={onClick} className="relative overflow-hidden group">
         <div 
           className="absolute top-0 left-0 right-0 h-1"
-          style={{ backgroundColor: course.color }}
+style={{ backgroundColor: course.color }}
         />
         
         <div className="flex items-start justify-between mb-4">

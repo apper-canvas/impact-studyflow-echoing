@@ -19,7 +19,7 @@ const CourseModal = ({ isOpen, onClose, onSubmit, course }) => {
 
   useEffect(() => {
     if (course) {
-      setFormData(course);
+setFormData(course);
     } else {
       setFormData({
         name: "",

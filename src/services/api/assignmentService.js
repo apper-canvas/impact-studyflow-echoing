@@ -1,11 +1,11 @@
+import { getApperClient } from "@/services/apperClient";
 const assignmentService = {
   getAll: async () => {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not initialized');
+      }
 
       const params = {
         fields: [
@@ -53,11 +53,10 @@ const assignmentService = {
 
   getById: async (id) => {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
+const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not initialized');
+      }
 
       const params = {
         fields: [
@@ -104,14 +103,12 @@ const assignmentService = {
     }
   },
 
-  getByCourseId: async (courseId) => {
+getByCourseId: async (courseId) => {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
-
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not initialized');
+      }
       const params = {
         fields: [
           {"field": {"Name": "Id"}},
@@ -163,14 +160,12 @@ const assignmentService = {
     }
   },
 
-  create: async (assignmentData) => {
+create: async (assignmentData) => {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
-
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not initialized');
+      }
       const params = {
         records: [{
           title_c: assignmentData.title || '',
@@ -225,11 +220,10 @@ const assignmentService = {
 
   update: async (id, assignmentData) => {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
+const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not initialized');
+      }
 
       const updateFields = {
         Id: parseInt(id)
@@ -286,14 +280,12 @@ const assignmentService = {
     }
   },
 
-  delete: async (id) => {
+delete: async (id) => {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
-
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not initialized');
+      }
       const params = {
         RecordIds: [parseInt(id)]
       };

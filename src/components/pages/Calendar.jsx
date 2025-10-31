@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns";
-import assignmentService from "@/services/api/assignmentService";
+import React, { useEffect, useState } from "react";
+import { addMonths, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, startOfMonth, startOfWeek, subMonths } from "date-fns";
 import courseService from "@/services/api/courseService";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
+import assignmentService from "@/services/api/assignmentService";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
 
 const Calendar = () => {
   const [assignments, setAssignments] = useState([]);
@@ -121,9 +121,9 @@ const Calendar = () => {
                 }`}>
                   {format(day, "d")}
                 </div>
-                <div className="space-y-1">
+<div className="space-y-1">
                   {dayAssignments.slice(0, 2).map(assignment => {
-                    const course = courses.find(c => c.Id === assignment.courseId);
+                    const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
                     return (
                       <div
                         key={assignment.Id}
@@ -172,9 +172,9 @@ const Calendar = () => {
               const course = courses.find(c => c.Id === assignment.courseId);
               return (
                 <div
-                  key={assignment.Id}
-                  className="p-4 rounded-lg border-l-4"
-                  style={{ borderLeftColor: course?.color || "#4F46E5" }}
+key={assignment.Id}
+                  className="p-2 border-l-4 rounded bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+                  style={{ borderLeftColor: courses.find(c => c.Id === assignment.course_id_c?.Id)?.color || "#4F46E5" }}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h4 className="font-semibold text-gray-900">{assignment.title}</h4>

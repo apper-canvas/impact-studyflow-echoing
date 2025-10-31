@@ -49,7 +49,7 @@ const Courses = () => {
   const handleSubmit = async (formData) => {
     try {
       if (selectedCourse) {
-        await courseService.update(selectedCourse.Id, formData);
+await courseService.update(selectedCourse.Id, formData);
         toast.success("Course updated successfully!");
       } else {
         await courseService.create(formData);
@@ -75,7 +75,7 @@ const Courses = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      const assignments = await assignmentService.getByCourseId(courseToDelete.Id);
+const assignments = await assignmentService.getByCourseId(courseToDelete.Id);
       await Promise.all(assignments.map(a => assignmentService.delete(a.Id)));
       await courseService.delete(courseToDelete.Id);
       toast.success("Course deleted successfully!");
@@ -110,7 +110,7 @@ const Courses = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map(course => (
           <CourseCard
-            key={course.Id}
+key={course.Id}
             course={course}
             onClick={() => {}}
             onEdit={handleEdit}

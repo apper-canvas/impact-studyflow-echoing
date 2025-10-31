@@ -58,9 +58,9 @@ const Assignments = () => {
   const handleSubmit = async (formData) => {
     try {
       if (selectedAssignment) {
-        await assignmentService.update(selectedAssignment.Id, formData);
-        toast.success("Assignment updated successfully!");
+await assignmentService.update(selectedAssignment.Id, formData);
       } else {
+        // Create new assignment
         await assignmentService.create(formData);
         toast.success("Assignment added successfully!");
       }
@@ -74,7 +74,7 @@ const Assignments = () => {
 
   const handleToggle = async (assignment) => {
     try {
-      await assignmentService.toggleStatus(assignment.Id);
+await assignmentService.toggleStatus(assignment.Id);
       loadData();
       toast.success(
         assignment.status === "completed" 
@@ -98,7 +98,7 @@ const Assignments = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      await assignmentService.delete(assignmentToDelete.Id);
+await assignmentService.delete(assignmentToDelete.Id);
       toast.success("Assignment deleted successfully!");
       setDeleteModalOpen(false);
       setAssignmentToDelete(null);
@@ -187,7 +187,7 @@ const Assignments = () => {
         ) : (
           <div className="space-y-3">
             {filteredAssignments.map(assignment => {
-              const course = courses.find(c => c.Id === assignment.courseId);
+const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
               return (
                 <AssignmentItem
                   key={assignment.Id}

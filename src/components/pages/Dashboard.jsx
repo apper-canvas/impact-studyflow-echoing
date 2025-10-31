@@ -70,7 +70,7 @@ const Dashboard = () => {
 
   const handleToggleAssignment = async (assignment) => {
     try {
-      await assignmentService.toggleStatus(assignment.Id);
+await assignmentService.toggleStatus(assignment.Id);
       loadData();
     } catch (err) {
       console.error("Failed to toggle assignment status:", err);
@@ -132,7 +132,7 @@ const Dashboard = () => {
           ) : (
             <div className="space-y-3">
               {upcomingAssignments.map(assignment => {
-                const course = courses.find(c => c.Id === assignment.courseId);
+const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
                 return (
                   <AssignmentItem
                     key={assignment.Id}
@@ -170,7 +170,7 @@ const Dashboard = () => {
           ) : (
             <div className="space-y-4">
               {courses.slice(0, 4).map(course => (
-                <div
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                   key={course.Id}
                   onClick={() => navigate("/courses")}
                   className="flex items-center gap-4 p-4 rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer"
