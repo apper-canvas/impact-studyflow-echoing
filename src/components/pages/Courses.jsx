@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import courseService from "@/services/api/courseService";
 import assignmentService from "@/services/api/assignmentService";
@@ -9,7 +10,8 @@ import CourseCard from "@/components/organisms/CourseCard";
 import CourseModal from "@/components/organisms/CourseModal";
 import DeleteModal from "@/components/organisms/DeleteModal";
 
-const Courses = ({ onAddClick }) => {
+const Courses = () => {
+  const { onAddClick } = useOutletContext();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

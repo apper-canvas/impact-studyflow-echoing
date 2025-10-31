@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import assignmentService from "@/services/api/assignmentService";
 import courseService from "@/services/api/courseService";
@@ -11,7 +12,8 @@ import AssignmentModal from "@/components/organisms/AssignmentModal";
 import DeleteModal from "@/components/organisms/DeleteModal";
 import ApperIcon from "@/components/ApperIcon";
 
-const Assignments = ({ onAddClick }) => {
+const Assignments = () => {
+  const { onAddClick } = useOutletContext();
   const [assignments, setAssignments] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
