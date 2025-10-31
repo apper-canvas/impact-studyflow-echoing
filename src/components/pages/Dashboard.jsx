@@ -168,9 +168,9 @@ const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
               icon="BookOpen"
             />
           ) : (
-            <div className="space-y-4">
-              {courses.slice(0, 4).map(course => (
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {courses.slice(0, 4).map(course => (
+                <div
                   key={course.Id}
                   onClick={() => navigate("/courses")}
                   className="flex items-center gap-4 p-4 rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer"
