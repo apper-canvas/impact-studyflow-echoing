@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { format, isWithinInterval, addDays } from "date-fns";
+import { addDays, format, isWithinInterval } from "date-fns";
 import courseService from "@/services/api/courseService";
 import assignmentService from "@/services/api/assignmentService";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import StatCard from "@/components/molecules/StatCard";
-import AssignmentItem from "@/components/organisms/AssignmentItem";
+import Courses from "@/components/pages/Courses";
 import CourseCard from "@/components/organisms/CourseCard";
+import AssignmentItem from "@/components/organisms/AssignmentItem";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import StatCard from "@/components/molecules/StatCard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ const Dashboard = () => {
     return assignments.filter(a => a.status === "pending").length;
   };
 
-  const getCompletionRate = () => {
+const getCompletionRate = () => {
     if (assignments.length === 0) return 0;
     const completed = assignments.filter(a => a.status === "completed").length;
     return Math.round((completed / assignments.length) * 100);
@@ -70,10 +71,10 @@ const Dashboard = () => {
 
   const handleToggleAssignment = async (assignment) => {
     try {
-await assignmentService.toggleStatus(assignment.Id);
-      loadData();
-    } catch (err) {
-      console.error("Failed to toggle assignment status:", err);
+      await assignmentService.toggleStatus(assignment.Id);
+      await loadData();
+    } catch (error) {
+      console.error("Error toggling assignment:", error);
     }
   };
 
@@ -131,16 +132,14 @@ await assignmentService.toggleStatus(assignment.Id);
             />
           ) : (
             <div className="space-y-3">
-              {upcomingAssignments.map(assignment => {
-const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
+              {upcomingAssignments.map((assignment) => {
+                const course = courses.find(c => c.Id === assignment.courseId);
                 return (
                   <AssignmentItem
                     key={assignment.Id}
                     assignment={assignment}
                     course={course}
-                    onToggle={handleToggleAssignment}
-                    onEdit={() => navigate("/assignments")}
-                    onDelete={() => navigate("/assignments")}
+                    onToggle={() => handleToggleAssignment(assignment)}
                   />
                 );
               })}
@@ -168,26 +167,13 @@ const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
               icon="BookOpen"
             />
           ) : (
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {courses.slice(0, 4).map(course => (
-                <div
+            <div className="space-y-4">
+              {courses.slice(0, 3).map((course) => (
+                <CourseCard
                   key={course.Id}
-                  onClick={() => navigate("/courses")}
-                  className="flex items-center gap-4 p-4 rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer"
-                >
-                  <div
-                    className="w-12 h-12 rounded-lg flex items-center justify-center shadow-sm shrink-0"
-                    style={{ backgroundColor: course.color }}
-                  >
-                    <span className="text-white font-bold text-lg">
-                      {course.name.charAt(0)}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">{course.name}</h3>
-                    <p className="text-sm text-gray-600 truncate">{course.instructor}</p>
-                  </div>
-                </div>
+                  course={course}
+                  compact
+                />
               ))}
             </div>
           )}

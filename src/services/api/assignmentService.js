@@ -1,4 +1,5 @@
 import { getApperClient } from "@/services/apperClient";
+
 const assignmentService = {
   getAll: async () => {
     try {
@@ -45,7 +46,7 @@ const assignmentService = {
         completedAt: assignment.completed_at_c || null,
         courseId: assignment.course_id_c?.Id || null
       }));
-    } catch (error) {
+} catch (error) {
       console.error("Error fetching assignments:", error?.response?.data?.message || error.message);
       throw error;
     }
@@ -53,7 +54,7 @@ const assignmentService = {
 
   getById: async (id) => {
     try {
-const apperClient = getApperClient();
+      const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
@@ -97,88 +98,32 @@ const apperClient = getApperClient();
         completedAt: assignment.completed_at_c || null,
         courseId: assignment.course_id_c?.Id || null
       };
-    } catch (error) {
+} catch (error) {
       console.error(`Error fetching assignment ${id}:`, error?.response?.data?.message || error.message);
       throw error;
     }
   },
 
-getByCourseId: async (courseId) => {
+create: async (data) => {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
-      const params = {
-        fields: [
-          {"field": {"Name": "Id"}},
-          {"field": {"Name": "title_c"}},
-          {"field": {"Name": "description_c"}},
-          {"field": {"Name": "due_date_c"}},
-          {"field": {"Name": "priority_c"}},
-          {"field": {"Name": "status_c"}},
-          {"field": {"Name": "grade_c"}},
-          {"field": {"Name": "max_grade_c"}},
-          {"field": {"Name": "weight_c"}},
-          {"field": {"Name": "created_at_c"}},
-          {"field": {"Name": "completed_at_c"}},
-          {"field": {"Name": "course_id_c"}}
-        ],
-        where: [
-          {
-            "FieldName": "course_id_c",
-            "Operator": "EqualTo",
-            "Values": [parseInt(courseId)]
-          }
-        ]
-      };
 
-      const response = await apperClient.fetchRecords('assignment_c', params);
-
-      if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
-      }
-
-      return response.data.map(assignment => ({
-        Id: assignment.Id,
-        title: assignment.title_c || '',
-        description: assignment.description_c || '',
-        dueDate: assignment.due_date_c || '',
-        priority: assignment.priority_c || 'medium',
-        status: assignment.status_c || 'pending',
-        grade: assignment.grade_c || null,
-        maxGrade: assignment.max_grade_c || 100,
-        weight: assignment.weight_c || 10,
-        createdAt: assignment.created_at_c || '',
-        completedAt: assignment.completed_at_c || null,
-        courseId: assignment.course_id_c?.Id || parseInt(courseId)
-      }));
-    } catch (error) {
-      console.error("Error fetching assignments by course:", error?.response?.data?.message || error.message);
-      throw error;
-    }
-  },
-
-create: async (assignmentData) => {
-    try {
-      const apperClient = getApperClient();
-      if (!apperClient) {
-        throw new Error('ApperClient not initialized');
-      }
       const params = {
         records: [{
-          title_c: assignmentData.title || '',
-          description_c: assignmentData.description || '',
-          due_date_c: assignmentData.dueDate || new Date().toISOString(),
-          priority_c: assignmentData.priority || 'medium',
-          status_c: assignmentData.status || 'pending',
-          grade_c: assignmentData.grade !== null && assignmentData.grade !== undefined ? parseFloat(assignmentData.grade) : null,
-          max_grade_c: parseFloat(assignmentData.maxGrade) || 100,
-          weight_c: parseFloat(assignmentData.weight) || 10,
+          title_c: data.title || '',
+          description_c: data.description || '',
+          due_date_c: data.dueDate || new Date().toISOString(),
+          priority_c: data.priority || 'medium',
+          status_c: data.status || 'pending',
+          grade_c: data.grade !== null && data.grade !== undefined ? parseFloat(data.grade) : null,
+          max_grade_c: parseFloat(data.maxGrade) || 100,
+          weight_c: parseFloat(data.weight) || 10,
           created_at_c: new Date().toISOString(),
-          completed_at_c: assignmentData.completedAt || null,
-          course_id_c: parseInt(assignmentData.courseId)
+          completed_at_c: data.completedAt || null,
+          course_id_c: parseInt(data.courseId)
         }]
       };
 
@@ -209,7 +154,7 @@ create: async (assignmentData) => {
           weight: createdAssignment.weight_c || 10,
           createdAt: createdAssignment.created_at_c || '',
           completedAt: createdAssignment.completed_at_c || null,
-          courseId: createdAssignment.course_id_c?.Id || parseInt(assignmentData.courseId)
+          courseId: createdAssignment.course_id_c?.Id || parseInt(data.courseId)
         };
       }
     } catch (error) {
@@ -218,9 +163,58 @@ create: async (assignmentData) => {
     }
   },
 
-  update: async (id, assignmentData) => {
+  toggleStatus: async (id) => {
     try {
-const apperClient = getApperClient();
+      const apperClient = getApperClient();
+      
+      // First get the current assignment
+      const response = await apperClient.getRecordById('assignment_c', id, {
+        fields: [{"field": {"Name": "status_c"}}]
+      });
+
+      if (!response.success || !response.data) {
+        console.error(response.message || "Failed to fetch assignment");
+        return null;
+      }
+
+      // Determine new status
+      const currentStatus = response.data.status_c;
+      const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
+
+      // Update the status
+      const updateResponse = await apperClient.updateRecord('assignment_c', {
+        records: [{
+          Id: id,
+          status_c: newStatus,
+          completed_at_c: newStatus === 'completed' ? new Date().toISOString() : null
+        }]
+      });
+
+      if (!updateResponse.success) {
+        console.error(updateResponse.message);
+        return null;
+      }
+
+      if (updateResponse.results) {
+        const successful = updateResponse.results.filter(r => r.success);
+        const failed = updateResponse.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to toggle status:`, failed);
+          return null;
+        }
+        
+        return successful[0]?.data || null;
+      }
+    } catch (error) {
+      console.error("Error toggling assignment status:", error?.message || error);
+    }
+    return null;
+  },
+
+update: async (id, data) => {
+    try {
+      const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
@@ -229,16 +223,16 @@ const apperClient = getApperClient();
         Id: parseInt(id)
       };
 
-      if (assignmentData.title !== undefined) updateFields.title_c = assignmentData.title;
-      if (assignmentData.description !== undefined) updateFields.description_c = assignmentData.description;
-      if (assignmentData.dueDate !== undefined) updateFields.due_date_c = assignmentData.dueDate;
-      if (assignmentData.priority !== undefined) updateFields.priority_c = assignmentData.priority;
-      if (assignmentData.status !== undefined) updateFields.status_c = assignmentData.status;
-      if (assignmentData.grade !== undefined) updateFields.grade_c = assignmentData.grade !== null ? parseFloat(assignmentData.grade) : null;
-      if (assignmentData.maxGrade !== undefined) updateFields.max_grade_c = parseFloat(assignmentData.maxGrade);
-      if (assignmentData.weight !== undefined) updateFields.weight_c = parseFloat(assignmentData.weight);
-      if (assignmentData.completedAt !== undefined) updateFields.completed_at_c = assignmentData.completedAt;
-      if (assignmentData.courseId !== undefined) updateFields.course_id_c = parseInt(assignmentData.courseId);
+      if (data.title !== undefined) updateFields.title_c = data.title;
+      if (data.description !== undefined) updateFields.description_c = data.description;
+      if (data.dueDate !== undefined) updateFields.due_date_c = data.dueDate;
+      if (data.priority !== undefined) updateFields.priority_c = data.priority;
+      if (data.status !== undefined) updateFields.status_c = data.status;
+      if (data.grade !== undefined) updateFields.grade_c = data.grade !== null ? parseFloat(data.grade) : null;
+      if (data.maxGrade !== undefined) updateFields.max_grade_c = parseFloat(data.maxGrade);
+      if (data.weight !== undefined) updateFields.weight_c = parseFloat(data.weight);
+      if (data.completedAt !== undefined) updateFields.completed_at_c = data.completedAt;
+      if (data.courseId !== undefined) updateFields.course_id_c = parseInt(data.courseId);
 
       const params = {
         records: [updateFields]
@@ -280,12 +274,73 @@ const apperClient = getApperClient();
     }
   },
 
-delete: async (id) => {
+getByCourseId: async (courseId) => {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
+      
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "title_c"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "due_date_c"}},
+          {"field": {"Name": "priority_c"}},
+          {"field": {"Name": "status_c"}},
+          {"field": {"Name": "grade_c"}},
+          {"field": {"Name": "max_grade_c"}},
+          {"field": {"Name": "weight_c"}},
+          {"field": {"Name": "created_at_c"}},
+          {"field": {"Name": "completed_at_c"}},
+          {"field": {"Name": "course_id_c"}}
+        ],
+        where: [{
+          "FieldName": "course_id_c",
+          "Operator": "EqualTo",
+          "Values": [parseInt(courseId)]
+        }]
+      };
+
+      const response = await apperClient.fetchRecords('assignment_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (!response?.data?.length) {
+        return [];
+      }
+
+      return response.data.map(assignment => ({
+        Id: assignment.Id,
+        title: assignment.title_c || '',
+        description: assignment.description_c || '',
+        dueDate: assignment.due_date_c || '',
+        priority: assignment.priority_c || 'medium',
+        status: assignment.status_c || 'pending',
+        grade: assignment.grade_c || null,
+        maxGrade: assignment.max_grade_c || 100,
+        weight: assignment.weight_c || 10,
+        createdAt: assignment.created_at_c || '',
+        completedAt: assignment.completed_at_c || null,
+        courseId: assignment.course_id_c?.Id || parseInt(courseId)
+      }));
+    } catch (error) {
+      console.error(`Error fetching assignments for course ${courseId}:`, error?.response?.data?.message || error.message);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error('ApperClient not initialized');
+      }
+
       const params = {
         RecordIds: [parseInt(id)]
       };
@@ -311,32 +366,6 @@ delete: async (id) => {
       throw error;
     }
   },
-
-  toggleStatus: async (id) => {
-    try {
-      const assignment = await assignmentService.getById(id);
-      
-      const currentStatus = assignment.status;
-      let newStatus;
-      let completedAt;
-      
-      if (currentStatus === "completed") {
-        newStatus = "pending";
-        completedAt = null;
-      } else {
-        newStatus = "completed";
-        completedAt = new Date().toISOString();
-      }
-
-      return await assignmentService.update(id, {
-        status: newStatus,
-        completedAt: completedAt
-      });
-    } catch (error) {
-      console.error("Error toggling assignment status:", error?.response?.data?.message || error.message);
-      throw error;
-    }
-  }
 };
 
 export default assignmentService;

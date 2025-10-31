@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
-import assignmentService from "@/services/api/assignmentService";
 import courseService from "@/services/api/courseService";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import SearchBar from "@/components/molecules/SearchBar";
-import AssignmentItem from "@/components/organisms/AssignmentItem";
+import assignmentService from "@/services/api/assignmentService";
+import ApperIcon from "@/components/ApperIcon";
 import AssignmentModal from "@/components/organisms/AssignmentModal";
 import DeleteModal from "@/components/organisms/DeleteModal";
-import ApperIcon from "@/components/ApperIcon";
+import AssignmentItem from "@/components/organisms/AssignmentItem";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import SearchBar from "@/components/molecules/SearchBar";
 
 const Assignments = () => {
   const { onAddClick } = useOutletContext();
@@ -55,12 +55,23 @@ const Assignments = () => {
     }
   };
 
-  const handleSubmit = async (formData) => {
+const handleSubmit = async (formData) => {
     try {
       if (selectedAssignment) {
-await assignmentService.update(selectedAssignment.Id, formData);
+        const updateData = {
+          course_id_c: parseInt(formData.courseId),
+          title_c: formData.title,
+          description_c: formData.description,
+          due_date_c: new Date(formData.dueDate).toISOString(),
+          priority_c: formData.priority,
+          status_c: formData.status,
+          grade_c: formData.grade ? parseFloat(formData.grade) : null,
+          max_grade_c: parseFloat(formData.maxGrade),
+          weight_c: parseFloat(formData.weight)
+        };
+        await assignmentService.update(selectedAssignment.Id, updateData);
+        toast.success("Assignment updated successfully");
       } else {
-        // Create new assignment
         await assignmentService.create(formData);
         toast.success("Assignment added successfully!");
       }
@@ -72,15 +83,15 @@ await assignmentService.update(selectedAssignment.Id, formData);
     }
   };
 
-  const handleToggle = async (assignment) => {
+const handleToggle = async (assignment) => {
     try {
-await assignmentService.toggleStatus(assignment.Id);
-      loadData();
+      await assignmentService.toggleStatus(assignment.Id);
       toast.success(
-        assignment.status === "completed" 
+        assignment.status_c === "completed" 
           ? "Assignment marked as pending" 
           : "Assignment completed! Great work!"
       );
+      await loadData();
     } catch (err) {
       toast.error("Failed to update assignment status");
     }
@@ -97,12 +108,13 @@ await assignmentService.toggleStatus(assignment.Id);
   };
 
   const handleDeleteConfirm = async () => {
+    if (!assignmentToDelete) return;
     try {
-await assignmentService.delete(assignmentToDelete.Id);
-      toast.success("Assignment deleted successfully!");
+      await assignmentService.delete(assignmentToDelete.Id);
+      toast.success("Assignment deleted successfully");
       setDeleteModalOpen(false);
       setAssignmentToDelete(null);
-      loadData();
+      await loadData();
     } catch (err) {
       toast.error(err.message || "Failed to delete assignment");
     }
@@ -185,13 +197,22 @@ await assignmentService.delete(assignmentToDelete.Id);
             icon="Search"
           />
         ) : (
-          <div className="space-y-3">
-            {filteredAssignments.map(assignment => {
-const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
+<div className="space-y-4">
+            {filteredAssignments.map((assignment) => {
+              const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
               return (
                 <AssignmentItem
                   key={assignment.Id}
-                  assignment={assignment}
+                  assignment={{
+                    ...assignment,
+                    title: assignment.title_c,
+                    description: assignment.description_c,
+                    dueDate: assignment.due_date_c,
+                    priority: assignment.priority_c,
+                    status: assignment.status_c,
+                    grade: assignment.grade_c,
+                    maxGrade: assignment.max_grade_c
+                  }}
                   course={course}
                   onToggle={handleToggle}
                   onEdit={handleEdit}

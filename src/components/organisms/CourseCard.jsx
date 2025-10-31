@@ -19,13 +19,14 @@ const CourseCard = ({ course, onClick, onEdit, onDelete }) => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.2 }}
-    >
+>
       <Card hover onClick={onClick} className="relative overflow-hidden group">
         <div 
-          className="absolute top-0 left-0 right-0 h-1"
-style={{ backgroundColor: course.color }}
-        />
-        
+          className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg mb-4"
+          style={{ backgroundColor: course.color_c || course.color }}
+        >
+          <ApperIcon name="BookOpen" className="text-white" size={28} />
+        </div>
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div 

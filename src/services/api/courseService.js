@@ -1,6 +1,4 @@
-import React from "react";
 import { getApperClient } from "@/services/apperClient";
-import Error from "@/components/ui/Error";
 
 const courseService = {
   getAll: async () => {
@@ -48,9 +46,9 @@ const courseService = {
     }
   },
 
-getById: async (id) => {
+  getById: async (id) => {
     try {
-      const apperClient = getApperClient();
+const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
@@ -94,9 +92,9 @@ getById: async (id) => {
     }
   },
 
-create: async (courseData) => {
+  create: async (courseData) => {
     try {
-      const apperClient = getApperClient();
+const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
@@ -140,15 +138,16 @@ create: async (courseData) => {
           createdAt: createdCourse.created_at_c || ''
         };
       }
+      return null;
     } catch (error) {
       console.error("Error creating course:", error?.response?.data?.message || error.message);
       throw error;
     }
   },
 
-update: async (id, courseData) => {
+  update: async (id, courseData) => {
     try {
-      const apperClient = getApperClient();
+const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
@@ -193,13 +192,14 @@ update: async (id, courseData) => {
           createdAt: updatedCourse.created_at_c || ''
         };
       }
+      return null;
     } catch (error) {
       console.error("Error updating course:", error?.response?.data?.message || error.message);
       throw error;
     }
   },
 
-delete: async (id) => {
+  delete: async (id) => {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {

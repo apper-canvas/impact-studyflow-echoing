@@ -1,7 +1,7 @@
 import React from "react";
-import { useAuth } from '@/layouts/Root';
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 
@@ -29,7 +29,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             </h1>
           </div>
           
-          <nav className="space-y-2">
+<nav className="space-y-2 px-4">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
@@ -41,13 +41,9 @@ const Sidebar = ({ isOpen, onClose }) => {
                     isActive && "bg-gradient-to-r from-primary to-indigo-600 text-white shadow-md"
                   )
                 }
->
-                {({ isActive }) => (
-                  <>
-                    <ApperIcon name={item.icon} size={20} />
-                    <span className="font-medium">{item.label}</span>
-                  </>
-                )}
+              >
+                <ApperIcon name={item.icon} size={20} />
+                <span className="font-medium">{item.label}</span>
               </NavLink>
             ))}
           </nav>
@@ -96,30 +92,25 @@ const Sidebar = ({ isOpen, onClose }) => {
               <ApperIcon name="X" size={24} className="text-gray-600" />
             </button>
           </div>
-          
-          <nav className="space-y-2">
-{navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === "/"}
-                onClick={onClose}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50",
-                    isActive && "bg-gradient-to-r from-primary to-indigo-600 text-white shadow-md"
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <ApperIcon name={item.icon} size={20} />
-                    <span className="font-medium">{item.label}</span>
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </nav>
+<nav className="space-y-2 px-4">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === "/"}
+              onClick={onClose}
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50",
+                  isActive && "bg-gradient-to-r from-primary to-indigo-600 text-white shadow-md"
+                )
+              }
+            >
+              <ApperIcon name={item.icon} size={20} />
+              <span className="font-medium">{item.label}</span>
+</NavLink>
+          ))}
+        </nav>
 
           <div className="mt-auto pt-4 border-t border-gray-200">
 <button

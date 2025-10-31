@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import courseService from "@/services/api/courseService";
 import assignmentService from "@/services/api/assignmentService";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
 import CourseCard from "@/components/organisms/CourseCard";
-import CourseModal from "@/components/organisms/CourseModal";
 import DeleteModal from "@/components/organisms/DeleteModal";
+import CourseModal from "@/components/organisms/CourseModal";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
 
 const Courses = () => {
   const { onAddClick } = useOutletContext();
@@ -47,10 +47,19 @@ const Courses = () => {
   };
 
   const handleSubmit = async (formData) => {
-    try {
+try {
       if (selectedCourse) {
-await courseService.update(selectedCourse.Id, formData);
-        toast.success("Course updated successfully!");
+        const updateData = {
+          name_c: formData.name,
+          instructor_c: formData.instructor,
+          schedule_c: formData.schedule,
+          location_c: formData.location,
+          color_c: formData.color,
+          semester_c: formData.semester,
+          credit_hours_c: parseInt(formData.creditHours)
+        };
+        await courseService.update(selectedCourse.Id, updateData);
+        toast.success("Course updated successfully");
       } else {
         await courseService.create(formData);
         toast.success("Course added successfully!");
@@ -68,17 +77,21 @@ await courseService.update(selectedCourse.Id, formData);
     setModalOpen(true);
   };
 
-  const handleDeleteClick = (course) => {
+const handleDeleteClick = (course) => {
     setCourseToDelete(course);
     setDeleteModalOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
     try {
-const assignments = await assignmentService.getByCourseId(courseToDelete.Id);
-      await Promise.all(assignments.map(a => assignmentService.delete(a.Id)));
+      // Delete associated assignments first
+      const assignments = await assignmentService.getByCourseId(courseToDelete.Id);
+      if (assignments && assignments.length > 0) {
+        await Promise.all(assignments.map(a => assignmentService.delete(a.Id)));
+      }
+      
       await courseService.delete(courseToDelete.Id);
-      toast.success("Course deleted successfully!");
+      toast.success("Course deleted successfully");
       setDeleteModalOpen(false);
       setCourseToDelete(null);
       loadCourses();
@@ -105,14 +118,22 @@ const assignments = await assignmentService.getByCourseId(courseToDelete.Id);
     );
   }
 
-  return (
+return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map(course => (
+        {courses.map((course) => (
           <CourseCard
-key={course.Id}
-            course={course}
-            onClick={() => {}}
+            key={course.Id}
+            course={{
+              ...course,
+              name: course.name_c,
+              instructor: course.instructor_c,
+              schedule: course.schedule_c,
+              location: course.location_c,
+              color: course.color_c,
+              semester: course.semester_c,
+              creditHours: course.credit_hours_c
+            }}
             onEdit={handleEdit}
             onDelete={handleDeleteClick}
           />
@@ -135,9 +156,9 @@ key={course.Id}
           setDeleteModalOpen(false);
           setCourseToDelete(null);
         }}
-        onConfirm={handleDeleteConfirm}
+onConfirm={handleDeleteConfirm}
         title="Delete Course?"
-        message={`Are you sure you want to delete "${courseToDelete?.name}"? This will also delete all associated assignments.`}
+        message={`Are you sure you want to delete "${courseToDelete?.name_c}"? This will also delete all associated assignments.`}
       />
     </>
   );

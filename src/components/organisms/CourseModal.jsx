@@ -17,9 +17,17 @@ const CourseModal = ({ isOpen, onClose, onSubmit, course }) => {
     creditHours: 3
   });
 
-  useEffect(() => {
+useEffect(() => {
     if (course) {
-setFormData(course);
+      setFormData({
+        name: course.name_c || course.name,
+        instructor: course.instructor_c || course.instructor,
+        schedule: course.schedule_c || course.schedule,
+        location: course.location_c || course.location,
+        color: course.color_c || course.color,
+        semester: course.semester_c || course.semester,
+        creditHours: course.credit_hours_c || course.creditHours
+      });
     } else {
       setFormData({
         name: "",

@@ -33,7 +33,7 @@ const studySessionService = {
         notes: session.notes_c || ''
       }));
     } catch (error) {
-      console.error("Error fetching study sessions:", error?.response?.data?.message || error.message);
+      console.error("Error fetching study sessions:", error?.message || error);
       throw error;
     }
   },
@@ -71,7 +71,7 @@ const apperClient = getApperClient();
         notes: session.notes_c || ''
       };
     } catch (error) {
-      console.error(`Error fetching study session ${id}:`, error?.response?.data?.message || error.message);
+      console.error(`Error fetching study session ${id}:`, error?.message || error);
       throw error;
     }
   },
@@ -115,12 +115,12 @@ const apperClient = getApperClient();
         notes: session.notes_c || ''
       }));
     } catch (error) {
-      console.error("Error fetching study sessions by course:", error?.response?.data?.message || error.message);
+      console.error("Error fetching study sessions by course:", error?.message || error);
       throw error;
     }
   },
 
-  create: async (sessionData) => {
+  create: async (data) => {
     try {
 const apperClient = getApperClient();
       if (!apperClient) {
@@ -129,10 +129,10 @@ const apperClient = getApperClient();
 
       const params = {
         records: [{
-          course_id_c: parseInt(sessionData.courseId),
-          duration_c: parseInt(sessionData.duration) || 0,
-          date_c: sessionData.date || new Date().toISOString(),
-          notes_c: sessionData.notes || ''
+          course_id_c: parseInt(data.courseId),
+          duration_c: parseInt(data.duration) || 0,
+          date_c: data.date || new Date().toISOString(),
+          notes_c: data.notes || ''
         }]
       };
 
@@ -153,32 +153,33 @@ const apperClient = getApperClient();
         const createdSession = response.results[0].data;
         return {
           Id: createdSession.Id,
-          courseId: createdSession.course_id_c?.Id || parseInt(sessionData.courseId),
+          courseId: createdSession.course_id_c?.Id || parseInt(data.courseId),
           duration: createdSession.duration_c || 0,
           date: createdSession.date_c || '',
           notes: createdSession.notes_c || ''
         };
       }
     } catch (error) {
-      console.error("Error creating study session:", error?.response?.data?.message || error.message);
+      console.error("Error creating study session:", error?.message || error);
       throw error;
     }
   },
 
-update: async (id, sessionData) => {
+  update: async (id, data) => {
     try {
-      const apperClient = getApperClient();
+const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
+      
       const updateFields = {
         Id: parseInt(id)
       };
 
-      if (sessionData.courseId !== undefined) updateFields.course_id_c = parseInt(sessionData.courseId);
-      if (sessionData.duration !== undefined) updateFields.duration_c = parseInt(sessionData.duration);
-      if (sessionData.date !== undefined) updateFields.date_c = sessionData.date;
-      if (sessionData.notes !== undefined) updateFields.notes_c = sessionData.notes;
+      if (data.courseId !== undefined) updateFields.course_id_c = parseInt(data.courseId);
+      if (data.duration !== undefined) updateFields.duration_c = parseInt(data.duration);
+      if (data.date !== undefined) updateFields.date_c = data.date;
+      if (data.notes !== undefined) updateFields.notes_c = data.notes;
 
       const params = {
         records: [updateFields]
@@ -208,17 +209,18 @@ update: async (id, sessionData) => {
         };
       }
     } catch (error) {
-      console.error("Error updating study session:", error?.response?.data?.message || error.message);
+      console.error("Error updating study session:", error?.message || error);
       throw error;
     }
   },
 
-delete: async (id) => {
+  delete: async (id) => {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error('ApperClient not initialized');
       }
+      
       const params = {
         RecordIds: [parseInt(id)]
       };
@@ -240,7 +242,7 @@ delete: async (id) => {
 
       return true;
     } catch (error) {
-      console.error("Error deleting study session:", error?.response?.data?.message || error.message);
+      console.error("Error deleting study session:", error?.message || error);
       throw error;
     }
   }

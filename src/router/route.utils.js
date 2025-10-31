@@ -1,4 +1,5 @@
 import routeConfig from "./routes.json";
+import React from "react";
 
 // Custom authorization functions registry
 const customFunctions = {}; // Always keep empty
@@ -161,9 +162,9 @@ export function verifyRouteAccess(config, user) {
         };
     }
 
-    // Otherwise, use the when conditions as before
-const whenClause = allowedConfig.when || allowedConfig;
-    const { conditions = [], operator = "OR" } = whenClause;
+    const whenClause = allowedConfig.when || allowedConfig;
+    const conditions = whenClause.conditions || [];
+    const operator = whenClause.operator || "OR";
 
     // Evaluate all conditions
     const results = conditions.map(cond => ({

@@ -122,16 +122,13 @@ const Calendar = () => {
                   {format(day, "d")}
                 </div>
 <div className="space-y-1">
-                  {dayAssignments.slice(0, 2).map(assignment => {
+                  {dayAssignments.slice(0, 2).map((assignment) => {
                     const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
                     return (
                       <div
                         key={assignment.Id}
-                        className="text-xs p-1 rounded truncate"
-                        style={{ 
-                          backgroundColor: `${course?.color}20`,
-                          color: course?.color || "#4F46E5"
-                        }}
+                        className="text-xs p-1 bg-gray-50 rounded truncate"
+                        style={{ borderLeft: `3px solid ${course?.color_c || "#4F46E5"}` }}
                       >
                         {assignment.title}
                       </div>
@@ -166,31 +163,35 @@ const Calendar = () => {
             message="No assignments due on this date"
             icon="CheckCircle2"
           />
-        ) : (
+) : (
           <div className="space-y-3">
             {selectedDateAssignments.map(assignment => {
-              const course = courses.find(c => c.Id === assignment.courseId);
+              const course = courses.find(c => c.Id === assignment.course_id_c?.Id);
               return (
                 <div
-key={assignment.Id}
-                  className="p-2 border-l-4 rounded bg-white hover:bg-gray-50 cursor-pointer transition-colors"
-                  style={{ borderLeftColor: courses.find(c => c.Id === assignment.course_id_c?.Id)?.color || "#4F46E5" }}
+                  key={assignment.Id}
+                  className="p-4 border-l-4 rounded bg-white hover:bg-gray-50 transition-colors"
+                  style={{ borderLeftColor: course?.color_c || "#4F46E5" }}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{assignment.title}</h4>
-                    <Badge variant={assignment.priority === "high" ? "high" : assignment.priority === "medium" ? "medium" : "low"}>
-                      {assignment.priority}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">{assignment.description}</p>
-                  <div className="flex items-center gap-2 text-sm">
+                  <h4 className="font-semibold text-gray-900 mb-1">{assignment.title}</h4>
+                  {assignment.description && (
+                    <p className="text-sm text-gray-600 mb-2">{assignment.description}</p>
+                  )}
+                  <div className="flex items-center gap-2 text-sm mb-1">
                     <ApperIcon name="BookOpen" size={14} className="text-gray-400" />
-                    <span className="text-gray-600">{course?.name}</span>
+                    <span className="text-gray-600">{course?.name || 'Unknown Course'}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm mt-1">
+                  <div className="flex items-center gap-2 text-sm">
                     <ApperIcon name="Clock" size={14} className="text-gray-400" />
                     <span className="text-gray-600">{format(new Date(assignment.dueDate), "h:mm a")}</span>
                   </div>
+                  {assignment.priority && (
+                    <div className="mt-2">
+                      <Badge variant={assignment.priority === "high" ? "high" : assignment.priority === "medium" ? "medium" : "low"}>
+                        {assignment.priority}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               );
             })}
